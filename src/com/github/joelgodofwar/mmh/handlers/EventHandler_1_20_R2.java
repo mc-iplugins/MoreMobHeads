@@ -2743,11 +2743,6 @@ public class EventHandler_1_20_R2 implements CommandExecutor, TabCompleter, List
 											if (mmh.config.getBoolean("head_settings.mob_heads.vanilla_heads.creeper", false)) {
 												mmh.playerGiveOrDropHead(player, new ItemStack(Material.CREEPER_HEAD));
 											} else {
-                                                mmh.LOGGER.log(splitmob[0].toLowerCase());
-                                                mmh.LOGGER.log(MobHeads.valueOf(splitmob[0].toUpperCase()).getName());
-                                                mmh.LOGGER.log(mmh.langName.getString(splitmob[0].toLowerCase(), MobHeads.valueOf(splitmob[0].toUpperCase()).getName()));
-
-
                                                 mmh.playerGiveOrDropHead(player,
 														mmh.makeHeads(mmh.langName.getString(splitmob[0].toLowerCase(), MobHeads.valueOf(splitmob[0].toUpperCase()).getName()),
 																MobHeads.valueOf(splitmob[0].toUpperCase()).getTexture(), MobHeads.valueOf(splitmob[0].toUpperCase()).getOwner(), EntityType.CREEPER, number)
