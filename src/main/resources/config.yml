@@ -1,5 +1,25 @@
 # DO NOT CHANGE VERSION
 version: 1.0.24
+
+# 注意
+#   该修改版本配置完全不兼容原插件头颅元数据设置，
+#   head_settings.lore.show_killer 等设置完全无效
+custom:
+  # 没有 / 击杀者不为玩家的 头颅掉落事件中
+  # 生成的头颅昵称，支持 & 颜色, papi 变量（没有触发者）
+  # - {name} 插件原昵称，如 村民的头
+  head_name: '{name}'
+  # 没有 / 击杀者不为玩家的 头颅掉落事件中
+  # 生成的头颅 lore，支持 & 颜色, papi 变量（没有触发者）
+  head_lore_list: []
+  # 击杀者为玩家的 头颅掉落事件中
+  # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
+  # - {name} 插件原昵称，如 玩家的头
+  killed_head_name: '{name}'
+  # 击杀者为玩家的 头颅掉落事件中
+  # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
+  killed_head_lore_list: []
+
 # Plugin related settings.
 plugin_settings:
   # change to false to stop auto-update-check

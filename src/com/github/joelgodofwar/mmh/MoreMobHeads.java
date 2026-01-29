@@ -38,6 +38,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
@@ -140,8 +141,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import dev.majek.hexnicks.HexNicks;
-import mineverse.Aust1n46.chat.api.MineverseChatAPI;
-import mineverse.Aust1n46.chat.api.MineverseChatPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
@@ -272,9 +271,9 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 			/** DEV check **/
 			File jarfile = this.getFile().getAbsoluteFile();
 			if(jarfile.toString().contains("-DEV")){
-				debug = true;
-				LOGGER.warn(ChatColor.RED + "Jar file contains -DEV, debug set to true" + ChatColor.RESET);
-				LOGGER.warn(ChatColor.RED + "jarfilename = " + StrUtils.Right(jarfilename, jarfilename.length() - jarfilename.lastIndexOf(File.separatorChar)) + ChatColor.RESET);
+//				debug = true;
+//				LOGGER.warn(ChatColor.RED + "Jar file contains -DEV, debug set to true" + ChatColor.RESET);
+//				LOGGER.warn(ChatColor.RED + "jarfilename = " + StrUtils.Right(jarfilename, jarfilename.length() - jarfilename.lastIndexOf(File.separatorChar)) + ChatColor.RESET);
 				//log("jarfile contains dev, debug set to true.");
 			}
 
@@ -417,119 +416,6 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 
 			consoleInfo("Enabled - Loading took " + LoadTime(startTime));
 
-			try {
-				Metrics metrics	= new Metrics(this, 6128);
-				// New chart here
-				// myPlugins()
-				metrics.addCustomChart(new AdvancedPie("my_other_plugins", new Callable<Map<String, Integer>>() {
-					@Override
-					public Map<String, Integer> call() throws Exception {
-						Map<String, Integer> valueMap = new HashMap<>();
-
-						if(getServer().getPluginManager().getPlugin("DragonDropElytra") != null){valueMap.put("DragonDropElytra", 1);}
-						if(getServer().getPluginManager().getPlugin("NoEndermanGrief") != null){valueMap.put("NoEndermanGrief", 1);}
-						if(getServer().getPluginManager().getPlugin("PortalHelper") != null){valueMap.put("PortalHelper", 1);}
-						if(getServer().getPluginManager().getPlugin("ShulkerRespawner") != null){valueMap.put("ShulkerRespawner", 1);}
-						//if(getServer().getPluginManager().getPlugin("MoreMobHeads") != null){valueMap.put("MoreMobHeads", 1);}
-						if(getServer().getPluginManager().getPlugin("SilenceMobs") != null){valueMap.put("SilenceMobs", 1);}
-						if(getServer().getPluginManager().getPlugin("SinglePlayerSleep") != null){valueMap.put("SinglePlayerSleep", 1);}
-						if(getServer().getPluginManager().getPlugin("VillagerWorkstationHighlights") != null){valueMap.put("VillagerWorkstationHighlights", 1);}
-						if(getServer().getPluginManager().getPlugin("RotationalWrench") != null){valueMap.put("RotationalWrench", 1);}
-						return valueMap;
-					}
-				}));
-				metrics.addCustomChart(new AdvancedPie("vanilla_heads", new Callable<Map<String, Integer>>() {
-					@Override
-					public Map<String, Integer> call() throws Exception {
-						Map<String, Integer> valueMap = new HashMap<>();
-						//int varTotal = myPlugins();
-						valueMap.put("CREEPER " + config.getString("head_settings.mob_heads.vanilla_heads.creeper").toUpperCase(), 1);
-						valueMap.put("ENDER_DRAGON " + config.getString("head_settings.mob_heads.vanilla_heads.ender_dragon").toUpperCase(), 1);
-						valueMap.put("SKELETON " + config.getString("head_settings.mob_heads.vanilla_heads.skeleton").toUpperCase(), 1);
-						valueMap.put("WITHER_SKELETON " + config.getString("head_settings.mob_heads.vanilla_heads.wither_skeleton").toUpperCase(), 1);
-						valueMap.put("ZOMBIE " + config.getString("head_settings.mob_heads.vanilla_heads.zombie").toUpperCase(), 1);
-						valueMap.put("PIGLIN " + config.getString("head_settings.mob_heads.vanilla_heads.piglin").toUpperCase(), 1);
-						return valueMap;
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("auto_update_check", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("plugin_settings.auto_update_check").toUpperCase();
-					}
-				}));
-				// add to site
-				metrics.addCustomChart(new SimplePie("var_debug", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("plugin_settings.debug").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("var_lang", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("plugin_settings.lang").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("whitelist.enforce", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("head_settings.player_heads.whitelist.enforce").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("blacklist.enforce", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("head_settings.player_heads.blacklist.enforce").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("custom_wandering_trader", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("wandering_trades.custom_wandering_trader").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("player_heads", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("wandering_trades.player_heads.enabled").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("block_heads", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("wandering_trades.block_heads.enabled").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("custom_trades", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("wandering_trades.custom_trades.enabled").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("apply_looting", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("head_settings.apply_looting").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("show_killer", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("head_settings.lore.show_killer").toUpperCase();
-					}
-				}));
-				metrics.addCustomChart(new SimplePie("show_plugin_name", new Callable<String>() {
-					@Override
-					public String call() throws Exception {
-						return "" + config.getString("head_settings.lore.show_plugin_name").toUpperCase();
-					}
-				}));
-			} catch (Exception exception) {
-				// Handle the exception or log it
-				//exception.printStackTrace();
-				reporter.reportDetailed(this, Report.newBuilder(PluginLibrary.REPORT_METRICS_LOAD_ERROR).error(exception));
-			}
 			try {
 				// Your code here that might cause an exception
 
@@ -989,7 +875,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 			LOGGER.debug(" DI itemstack=" + itemstack.getType().toString());
 			int enchantmentlevel = 0;
 			if(config.getBoolean("head_settings.apply_looting", true)){
-				enchantmentlevel = itemstack.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
+				enchantmentlevel = itemstack.getEnchantmentLevel(Enchantment.LOOTING);
 			}
 			if(chancePercent == 0){
 				LOGGER.debug(" DI chancePercent == 0");
@@ -1098,7 +984,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		ItemStack itemstack = event.getEntity().getKiller().getInventory().getItemInMainHand();
 		if(itemstack != null){
 			LOGGER.debug("itemstack=" + itemstack.getType().toString() + " line:954");
-			int enchantmentlevel = itemstack.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);//.containsEnchantment(Enchantment.LOOT_BONUS_MOBS);
+			int enchantmentlevel = itemstack.getEnchantmentLevel(Enchantment.LOOTING);//.containsEnchantment(Enchantment.LOOT_BONUS_MOBS);
 			LOGGER.debug("enchantmentlevel=" + enchantmentlevel + " line:956");
 			double enchantmentlevelpercent = ((double)enchantmentlevel / 100);
 			LOGGER.debug("enchantmentlevelpercent=" + enchantmentlevelpercent + " line:958");
@@ -1144,21 +1030,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		LOGGER.debug("GN - head_settings.player_heads.announce_kill.displayname=" + getConfig().getBoolean("head_settings.player_heads.announce_kill.displayname"));
 		if(config.getBoolean("head_settings.player_heads.announce_kill.displayname", false)) {
 			playerName = ChatColorUtils.setColorsByCode(player.getDisplayName());
-			if(getServer().getPluginManager().getPlugin("VentureChat") != null){
-				MineverseChatPlayer mcp = MineverseChatAPI.getMineverseChatPlayer(player);
-				String nick = mcp.getNickname();
-				if(nick != null){
-					LOGGER.debug("GN - mcp.getNickname()=" + mcp.getNickname());
-					LOGGER.debug("GN - ChatColor.translateAlternateColorCodes('&', nick)=" + ChatColor.translateAlternateColorCodes('&', nick));
-					//ChatColor.translateAlternateColorCodes('&', nick);
-					//nick = nick.replaceAll("§", "&");
-					nick = ChatColorUtils.setColorsByCode(nick);
-					LOGGER.debug("VentureChat ChatColorUtils.setColorsByCode(nick)=" + nick);
-					return nick;
-				}
-				LOGGER.debug("GN - VentureChat Nick=null using " + playerName);
-				return Format.color(playerName);
-			}else if(getServer().getPluginManager().getPlugin("Essentials") != null){
+			if(getServer().getPluginManager().getPlugin("Essentials") != null){
 				Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 				//User user = ess.getUserMap().getUser(player.getName());
 				//if(debug){logDebug("Essnetials Nick=" + ess.getUserMap().getUser(player.getName()).getNickname());}
@@ -1226,16 +1098,16 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		profile.setTextures(textures);
 		meta.setOwnerProfile(profile);
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(ChatColor.stripColor(name), eType) ));
-		ArrayList<String> lore = new ArrayList();
-		if(config.getBoolean("head_settings.lore.show_killer", true)){
-			lore.add(ChatColor.RESET + ChatColorUtils.setColors( langName.getString("killedby", "<RED>Killed <RESET>By <YELLOW><player>").replace("<player>", getName(eType, killer)) ) );
-		}
-		if(config.getBoolean("head_settings.lore.show_plugin_name", true)){
-			lore.add(ChatColor.AQUA + "MoreMobHeads");
-		}
-		meta.setLore(lore);
-		meta.setLore(lore);
-		meta.setDisplayName(name);
+
+        List<String> lore = config.getStringList("custom.killed_head_lore_list");
+        lore = PlaceholderAPI.setBracketPlaceholders(killer, lore);
+        meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
+
+        String killed_head_name = config.getString("custom.killed_head_name", "{name}");
+        killed_head_name = killed_head_name.replace("{name}", name);
+        killed_head_name = PlaceholderAPI.setPlaceholders(killer, killed_head_name);
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', killed_head_name));
+
 		PersistentDataContainer skullPDC = meta.getPersistentDataContainer();
 		skullPDC.set(NAME_KEY, PersistentDataType.STRING, name);
 		if (lore != null) {
@@ -1328,13 +1200,16 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		profile.setTextures(textures);
 		meta.setOwnerProfile(profile);
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(meta.getDisplayName(), eType) ));
-		ArrayList<String> lore = new ArrayList();
-		if(config.getBoolean("head_settings.lore.show_plugin_name", true)){
-			lore.add(ChatColor.AQUA + "MoreMobHeads");
-		}
-		meta.setLore(lore);
-		meta.setLore(lore);
-		meta.setDisplayName(name);
+
+        List<String> lore = config.getStringList("custom.head_lore_list");
+        lore = PlaceholderAPI.setBracketPlaceholders(null, lore);
+        meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
+
+        String head_name = config.getString("custom.head_name", "{name}");
+        head_name = head_name.replace("{name}", name);
+        head_name = PlaceholderAPI.setPlaceholders(null, head_name);
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', head_name));
+
 		head.setItemMeta(meta);
 		PersistentDataContainer skullPDC = head.getItemMeta().getPersistentDataContainer();
 		skullPDC.set(NAME_KEY, PersistentDataType.STRING, name);
@@ -1374,23 +1249,20 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		profile.setTextures(textures);
 		meta.setOwnerProfile(profile);
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(meta.getDisplayName(), eType) ));
-		List<String> headLore = new ArrayList<>();
-		if( (lore == null) || lore.isEmpty() ) {
-			lore = new ArrayList();
-		}
-		//LOGGER.debug("lore = " + lore);
-		lore = StrUtils.removeBlanks(lore);
-		if(config.getBoolean("head_settings.lore.show_plugin_name", true)){
-			headLore.addAll(lore);
-			headLore.add(ChatColor.AQUA + "MoreMobHeads");
-		}
-		meta.setLore(headLore);
-		meta.setLore(headLore);
-		meta.setDisplayName(name);
+
+        List<String> headLore = config.getStringList("custom.head_lore_list");
+        headLore = PlaceholderAPI.setBracketPlaceholders(null, headLore);
+        meta.setLore(headLore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
+
+        String head_name = config.getString("custom.head_name", "{name}");
+        head_name = head_name.replace("{name}", name);
+        head_name = PlaceholderAPI.setPlaceholders(null, head_name);
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', head_name));
+
 		head.setItemMeta(meta);
 		PersistentDataContainer skullPDC = head.getItemMeta().getPersistentDataContainer();
 		skullPDC.set(NAME_KEY, PersistentDataType.STRING, name);
-		if (lore != null) {
+		if (headLore != null) {
 			skullPDC.set(LORE_KEY, LORE_PDT, headLore.toArray(new String[0]));
 		}
 		skullPDC.set(UUID_KEY, PersistentDataType.STRING, uuid);
@@ -1403,7 +1275,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 	 * Converts a Base64-encoded string containing a JSON structure or a URL string to a URL object
 	 * representing the texture's URL.
 	 *
-	 * @param input The Base64-encoded string containing the JSON structure with a URL or a URL string itself.
+	 * @param base64 The Base64-encoded string containing the JSON structure with a URL or a URL string itself.
 	 * @return A URL object representing the texture's URL. If the input is a direct URL string,
 	 *         it is returned directly. If the input is a Base64-encoded string, the method
 	 *         decodes it, extracts the URL from the JSON structure, and returns the corresponding URL object.
@@ -1451,7 +1323,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 	 * Converts a Base64-encoded string containing a JSON structure or a URL string to a URL object
 	 * representing the texture's URL.
 	 *
-	 * @param input The Base64-encoded string containing the JSON structure with a URL
+	 * @param base64 The Base64-encoded string containing the JSON structure with a URL
 	 *              or a URL string itself.
 	 * @return A URL object representing the texture's URL extracted from the input string.
 	 * @throws MalformedURLException If the URL extraction or URL creation encounters a malformed URL.
@@ -1473,7 +1345,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 	 * Retrieves the sound string associated with the display name and entity type.
 	 *
 	 * @param displayname The display name of the entity.
-	 * @param entity The entity for which to determine the sound string.
+	 * @param eType The entity for which to determine the sound string.
 	 * @return The sound string for the given entity based on its display name and type.
 	 */
 	public String getSoundString(String displayname, EntityType eType) {
@@ -1517,7 +1389,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 			break;
 		case IRON_GOLEM:
 		case PLAYER:
-		case SNOWMAN:
+		case SNOW_GOLEM:
 			soundType = "hurt";
 			break;
 		case GOAT:
@@ -1531,7 +1403,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 				break;
 			}
 			break;
-		case MUSHROOM_COW:
+		case MOOSHROOM:
 			name = "COW";
 			soundType = "ambient";
 			break;

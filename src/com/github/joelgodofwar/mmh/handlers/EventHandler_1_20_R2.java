@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 
+import com.github.joelgodofwar.mmh.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -103,15 +104,7 @@ import com.github.joelgodofwar.mmh.enums.TropicalFishHeads;
 import com.github.joelgodofwar.mmh.enums.VillagerHeads;
 import com.github.joelgodofwar.mmh.enums.WolfHeads;
 import com.github.joelgodofwar.mmh.enums.ZombieVillagerHeads;
-import com.github.joelgodofwar.mmh.util.ChatColorUtils;
-import com.github.joelgodofwar.mmh.util.ConfigHelper;
-import com.github.joelgodofwar.mmh.util.MiniBlockRecipesOld;
-import com.github.joelgodofwar.mmh.util.SkinUtils;
-import com.github.joelgodofwar.mmh.util.StrUtils;
-import com.github.joelgodofwar.mmh.util.Utils;
-import com.github.joelgodofwar.mmh.util.VerifyConfig;
-import com.github.joelgodofwar.mmh.util.Version;
-import com.github.joelgodofwar.mmh.util.YmlConfiguration;
+import com.github.joelgodofwar.mmh.util.MiniBlockRecipes;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 
@@ -183,7 +176,7 @@ public class EventHandler_1_20_R2 implements CommandExecutor, TabCompleter, List
 			checkMiniBlocks();
 			if(mmh.config.getBoolean("head_settings.mini_blocks.stonecutter", false)) {
 				int quanity = mmh.config.getInt("head_settings.mini_blocks.perblock", 1);
-				MiniBlockRecipesOld miniblockrecipes = new MiniBlockRecipesOld(blockhead_recipes, quanity);
+                MiniBlockRecipes miniblockrecipes = new MiniBlockRecipes(blockhead_recipes, quanity);
 				miniblockrecipes.register();
 			}
 			mmh.blockHeads = blockHeads;
@@ -1895,7 +1888,7 @@ public class EventHandler_1_20_R2 implements CommandExecutor, TabCompleter, List
 
 							if(mmh.config.getBoolean("head_settings.mini_blocks.stonecutter", false)) {
 								int quanity = mmh.config.getInt("head_settings.mini_blocks.perblock", 1);
-								MiniBlockRecipesOld miniblockrecipes = new MiniBlockRecipesOld(blockhead_recipes, quanity);
+								MiniBlockRecipes miniblockrecipes = new MiniBlockRecipes(blockhead_recipes, quanity);
 								miniblockrecipes.register();
 							}
 
@@ -2750,7 +2743,12 @@ public class EventHandler_1_20_R2 implements CommandExecutor, TabCompleter, List
 											if (mmh.config.getBoolean("head_settings.mob_heads.vanilla_heads.creeper", false)) {
 												mmh.playerGiveOrDropHead(player, new ItemStack(Material.CREEPER_HEAD));
 											} else {
-												mmh.playerGiveOrDropHead(player,
+                                                mmh.LOGGER.log(splitmob[0].toLowerCase());
+                                                mmh.LOGGER.log(MobHeads.valueOf(splitmob[0].toUpperCase()).getName());
+                                                mmh.LOGGER.log(mmh.langName.getString(splitmob[0].toLowerCase(), MobHeads.valueOf(splitmob[0].toUpperCase()).getName()));
+
+
+                                                mmh.playerGiveOrDropHead(player,
 														mmh.makeHeads(mmh.langName.getString(splitmob[0].toLowerCase(), MobHeads.valueOf(splitmob[0].toUpperCase()).getName()),
 																MobHeads.valueOf(splitmob[0].toUpperCase()).getTexture(), MobHeads.valueOf(splitmob[0].toUpperCase()).getOwner(), EntityType.CREEPER, number)
 														);
