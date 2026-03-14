@@ -12,13 +12,25 @@ custom:
   # 没有 / 击杀者不为玩家的 头颅掉落事件中
   # 生成的头颅 lore，支持 & 颜色, papi 变量（没有触发者）
   head_lore_list: []
-  # 击杀者为玩家的 头颅掉落事件中
+  # 击杀者为玩家，被击杀者为生物的 头颅掉落事件中
   # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
   # - {name} 插件原昵称，如 玩家的头
-  killed_head_name: '{name}'
-  # 击杀者为玩家的 头颅掉落事件中
+  mob_killed_head_name: '{name}由玩家%player_name%击杀获得'
+  # 击杀者为玩家，被击杀者为生物的 头颅掉落事件中
   # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
-  killed_head_lore_list: []
+  mob_killed_head_lore_list: []
+  # 击杀者为玩家，被击杀者为玩家的 头颅掉落事件中
+  # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
+  # - 如果要以被击杀玩家身份解析papi变量，需要用<>包裹变量
+  #   例：%player_name% 击杀了玩家 <%player_name%>
+  # - {name} 插件原昵称，如 玩家的头
+  player_killed_head_name: '{name}由玩家%player_name%击杀获得'
+  # 击杀者为玩家，被击杀者为玩家的 头颅掉落事件中
+  # 生成的头颅昵称，支持 & 颜色, papi 变量（触发者为击杀该生物的玩家）
+  # - 如果要以被击杀玩家身份解析papi变量，需要用<>包裹变量
+  #   例：%player_name% 击杀了玩家 <%player_name%>
+  player_killed_head_lore_list:
+    - '%player_name% 击杀了玩家 <%player_name%>'
 
 # Plugin related settings.
 plugin_settings:

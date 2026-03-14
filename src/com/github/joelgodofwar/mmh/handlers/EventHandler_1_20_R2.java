@@ -422,7 +422,7 @@ public class EventHandler_1_20_R2 implements CommandExecutor, TabCompleter, List
 
 							killerName = mmh.getNickname(killer);
 							entityName = mmh.getNickname(victim);
-
+                            // TODO 一般不存在 PlayerProfile#uuid != Player#uuid 的情况
 							head = mmh.makeHead(entityName, profile.getTextures().getSkin().toString(), profile.getUniqueId().toString(), entity.getType(), entity.getKiller());
 							mmh.playerGiveOrDropHead(entity.getKiller(), head);
 							mmh.LOGGER.debug("EDE " + ((Player) entity).getDisplayName().toString() + " Player Head Dropped");

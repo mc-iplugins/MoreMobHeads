@@ -17,23 +17,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1071,6 +1061,39 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		return playerName;
 	}
 
+    /**
+     * 解析单个消息字符串中的 PAPI 占位符。
+     *
+     * @param message        原始消息（含 <%...%> 和 %...%）
+     * @param killer         击杀者（用于解析未包裹的变量）
+     * @param killedPlayer   被击杀者（用于解析 <...> 中的变量）
+     * @return 解析后的字符串
+     */
+    public static String parseMessage(String message, Player killer, Player killedPlayer) {
+        if (message == null || message.isEmpty()) {
+            return message;
+        }
+        java.util.regex.Pattern KILLED_PLACEHOLDER_PATTERN = java.util.regex.Pattern.compile("<(%[^%]*[^%]*%)>");
+        // 提取并替换被 <> 包裹的 killedPlayer 变量
+        Matcher matcher = KILLED_PLACEHOLDER_PATTERN.matcher(message);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String innerPlaceholder = matcher.group(1); // 如 "%player_name%"
+            String replaced = PlaceholderAPI.setPlaceholders(killedPlayer, innerPlaceholder);
+            // 转义  $  和 \ 避免 appendReplacement 报错
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(replaced));
+        }
+        matcher.appendTail(sb);
+        String partiallyParsed = sb.toString();
+        // 解析剩余的（未包裹的）变量，使用 killer
+        return PlaceholderAPI.setPlaceholders(killer, partiallyParsed);
+    }
+
+    public static List<String> parseMessages(List<String> messages, Player killer, Player killedPlayer) {
+        return Optional.ofNullable(messages).orElse(Collections.emptyList()).stream()
+                .map(e -> parseMessage(e, killer, killedPlayer)).toList();
+    }
+    
 	/**
 	 * Creates a custom head ItemStack with the specified name, texture URL (as a String),
 	 * associated entity type, and player who delivered the killing blow.
@@ -1099,14 +1122,27 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		meta.setOwnerProfile(profile);
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(ChatColor.stripColor(name), eType) ));
 
-        List<String> lore = config.getStringList("custom.killed_head_lore_list");
-        lore = PlaceholderAPI.setBracketPlaceholders(killer, lore);
-        meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
+        List<String> lore;
+        Player killedPlayer = Bukkit.getPlayer(UUID.fromString(uuid));
+        if (killedPlayer != null) {
+            lore = config.getStringList("custom.player_killed_head_lore_list");
+            lore = parseMessages(lore, killer, killedPlayer);
+            meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
 
-        String killed_head_name = config.getString("custom.killed_head_name", "{name}");
-        killed_head_name = killed_head_name.replace("{name}", name);
-        killed_head_name = PlaceholderAPI.setPlaceholders(killer, killed_head_name);
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', killed_head_name));
+            String killed_head_name = config.getString("custom.player_killed_head_name", "{name}");
+            killed_head_name = killed_head_name.replace("{name}", name);
+            killed_head_name = parseMessage(killed_head_name, killer, killedPlayer);
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', killed_head_name));
+        } else {
+            lore = config.getStringList("custom.mob_killed_head_lore_list");
+            lore = PlaceholderAPI.setPlaceholders(killer, lore);
+            meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
+
+            String killed_head_name = config.getString("custom.mob_killed_head_name", "{name}");
+            killed_head_name = killed_head_name.replace("{name}", name);
+            killed_head_name = PlaceholderAPI.setPlaceholders(killer, killed_head_name);
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', killed_head_name));
+        }
 
 		PersistentDataContainer skullPDC = meta.getPersistentDataContainer();
 		skullPDC.set(NAME_KEY, PersistentDataType.STRING, name);
@@ -1202,7 +1238,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(meta.getDisplayName(), eType) ));
 
         List<String> lore = config.getStringList("custom.head_lore_list");
-        lore = PlaceholderAPI.setBracketPlaceholders(null, lore);
+        lore = PlaceholderAPI.setPlaceholders(null, lore);
         meta.setLore(lore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
 
         String head_name = config.getString("custom.head_name", "{name}");
@@ -1251,7 +1287,7 @@ public class MoreMobHeads extends JavaPlugin implements Listener{
 		meta.setNoteBlockSound(NamespacedKey.minecraft( getSoundString(meta.getDisplayName(), eType) ));
 
         List<String> headLore = config.getStringList("custom.head_lore_list");
-        headLore = PlaceholderAPI.setBracketPlaceholders(null, headLore);
+        headLore = PlaceholderAPI.setPlaceholders(null, headLore);
         meta.setLore(headLore.stream().map(e -> ChatColor.translateAlternateColorCodes('&', e)).toList());
 
         String head_name = config.getString("custom.head_name", "{name}");
