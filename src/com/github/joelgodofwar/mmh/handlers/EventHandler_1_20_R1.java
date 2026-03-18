@@ -1473,8 +1473,15 @@ public class EventHandler_1_20_R1 implements CommandExecutor, TabCompleter, List
 								}
 								mmh.LOGGER.debug("EDE " + MobHeads119.valueOf(name) + " killed");
 								break;
-							case "CAMEL":
-							case "SNIFFER":
+						case "CAMEL":
+						case "SNIFFER":
+						case "NAUTILUS":
+						case "ZOMBIE_NAUTILUS":
+						case "COPPER_GOLEM":
+						case "CAMEL_HUSK":
+						case "PARCHED":
+						case "HAPPY_GHAST":
+						case "CREAKING":
 								mmh.LOGGER.debug("EDE CS name=" + name);
 								mmh.LOGGER.debug("EDE CS texture=" + MobHeads120.valueOf(name).getTexture().toString());
 								mmh.LOGGER.debug("EDE CS location=" + entity.getLocation().toString());
@@ -1526,6 +1533,13 @@ public class EventHandler_1_20_R1 implements CommandExecutor, TabCompleter, List
 								}
 								break;
 							default:
+								// Check if the mob name exists in MobHeads enum, skip if not found
+								try {
+									MobHeads.valueOf(name);
+								} catch (IllegalArgumentException e) {
+									mmh.LOGGER.warn("Unsupported mob type: " + name + ", skipping head drop. Please update the plugin to add support for this mob.");
+									break;
+								}
 								// mmh.makeSkull(MobHeads.valueOf(name).getTexture(), name);
 								mmh.LOGGER.debug("EDE name=" + name + " line:1122");
 								mmh.LOGGER.debug("EDE texture=" + MobHeads.valueOf(name).getTexture().toString() + " line:1123");
